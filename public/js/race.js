@@ -2,7 +2,7 @@ import { $, esc, carSvg, gauge, toast } from './ui.js';
 import { getPilot } from './api.js';
 import { createTyper } from './engine.js';
 
-const CAR_COLORS = ['#ff3b2f', '#3ea6ff', '#22d47b', '#ffb400', '#c77dff'];
+const CAR_COLORS = ['#3fb489', '#d6a85c', '#6fa8dc', '#e2654f', '#b7a3e0'];
 const COUNTDOWN_LIGHTS = 5;
 
 export function mount(root, { code } = {}) {

@@ -81,3 +81,17 @@ docker run -p 3000:3000 -v fmq-data:/data fingermcqueen
 ```
 
 Veritabanı `/data` altında tutulur; platformda bu yola kalıcı bir disk/volume bağlanmalıdır.
+
+### Railway
+
+Depoda `Dockerfile` ve `railway.json` hazır; Railway ikisini de otomatik algılar.
+
+1. railway.com → GitHub ile giriş → **New Project → Deploy from GitHub repo** → bu depoyu seç.
+2. Servisin **Variables** sekmesine `PORT=3000` ekle (`TRUST_PROXY=1` ve `DB_FILE` Dockerfile'da zaten tanımlı).
+3. Servise bir **Volume** ekle, bağlama yolu (mount path): `/data`. Bu olmazsa her yeniden yayında skorlar silinir.
+4. **Settings → Networking → Generate Domain** (port sorulursa `3000`).
+5. Deploy loglarında `🏁 FingerMcQueen pistte` satırını gör, verilen adresi aç.
+
+> **Tek kopya (replica) çalıştır.** Yarış odaları sunucu belleğinde, veritabanı da tek bir SQLite dosyasında tutulur; birden fazla kopya ölçeklemek odaları böler.
+
+Ortam değişkenleri: `PORT`, `DB_FILE`, `TRUST_PROXY` (proxy arkasında `1`; gerçek ziyaretçi IP'si hız limitinde kullanılır). Sağlık kontrolü: `GET /api/health`.

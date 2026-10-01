@@ -20,7 +20,7 @@ export function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-export const carSvg = (color = '#ff3b2f') => `
+export const carSvg = (color = '#3fb489') => `
   <svg viewBox="0 0 64 28" aria-hidden="true">
     <rect x="2" y="2" width="8" height="24" rx="2" fill="#111"/>
     <rect x="6" y="11" width="44" height="7" rx="3" fill="${color}"/>
@@ -46,14 +46,14 @@ export function gauge(el, { max, unit, redline = 0.8 }) {
   for (let i = 0; i <= 10; i++) {
     const d = start + (sweep * i) / 10;
     const [x1, y1] = pt(d, r - 2), [x2, y2] = pt(d, r - (i % 5 ? 10 : 16));
-    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${i / 10 >= redline ? '#ff3b2f' : '#8d929c'}" stroke-width="${i % 5 ? 2 : 3}"/>`;
+    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${i / 10 >= redline ? '#e2654f' : '#8e959c'}" stroke-width="${i % 5 ? 2 : 3}"/>`;
   }
   el.classList.add('gauge');
   el.innerHTML = `
     <svg viewBox="0 0 200 170">
       <path d="${arc(start, start + sweep, r)}" fill="none" stroke="#22262e" stroke-width="10" stroke-linecap="round"/>
-      <path d="${arc(start + sweep * redline, start + sweep, r)}" fill="none" stroke="#8a1f19" stroke-width="10" stroke-linecap="round"/>
-      <path class="fill" d="" fill="none" stroke="#ffb400" stroke-width="10" stroke-linecap="round"/>
+      <path d="${arc(start + sweep * redline, start + sweep, r)}" fill="none" stroke="#5a2a22" stroke-width="10" stroke-linecap="round"/>
+      <path class="fill" d="" fill="none" stroke="#d6a85c" stroke-width="10" stroke-linecap="round"/>
       ${ticks}
       <g class="needle"><line x1="100" y1="100" x2="100" y2="34" stroke="#f1efe8" stroke-width="3" stroke-linecap="round"/></g>
       <circle cx="100" cy="100" r="7" fill="#f1efe8"/>

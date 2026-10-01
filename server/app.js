@@ -33,7 +33,10 @@ function rateLimit(limit, windowMs) {
 
 export function createApp(db, { now = () => Date.now() } = {}) {
   const app = express();
-  app.set('trust proxy', 'loopback');
+  // Behind a hosting proxy (Railway, Render, …) set TRUST_PROXY=1 so rate limits
+  // see each visitor's real IP instead of the proxy's.
+  const hops = Number(process.env.TRUST_PROXY);
+  app.set('trust proxy', Number.isInteger(hops) && hops > 0 ? hops : 'loopback');
   app.use(express.json({ limit: '4kb' }));
 
   const q = {
@@ -86,6 +89,8 @@ export function createApp(db, { now = () => Date.now() } = {}) {
     if (best == null) return null;
     return { score: best, rank: q.ahead[better].get(test, since, best).n + 1 };
   }
+
+  app.get('/api/health', (req, res) => res.json({ ok: true }));
 
   app.get('/api/catalog', (req, res) => res.json(publicCatalog()));
 

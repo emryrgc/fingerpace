@@ -50,7 +50,7 @@ function home(root) {
     <section class="cards">
       <a class="card" href="#/typing">
         <span class="num">01</span>
-        <svg class="card-icon" viewBox="0 0 44 44"><rect x="3" y="10" width="38" height="24" rx="4" fill="none" stroke="#ff3b2f" stroke-width="3"/><path d="M10 18h4M18 18h4M26 18h4M10 25h24" stroke="#f1efe8" stroke-width="3" stroke-linecap="round"/></svg>
+        <svg class="card-icon" viewBox="0 0 44 44"><rect x="3" y="10" width="38" height="24" rx="4" fill="none" stroke="#3fb489" stroke-width="3"/><path d="M10 18h4M18 18h4M26 18h4M10 25h24" stroke="#f1efe8" stroke-width="3" stroke-linecap="round"/></svg>
         <h3>Klavye GP</h3>
         <p>15, 30 veya 60 saniye. Hayalet arabanla — yani kendi rekorunla — kafa kafaya yazarsın.</p>
         <span class="go">Piste çık →</span>
@@ -64,7 +64,7 @@ function home(root) {
       </a>
       <a class="card" href="#/clicks">
         <span class="num">03</span>
-        <svg class="card-icon" viewBox="0 0 44 44"><circle cx="22" cy="22" r="17" fill="none" stroke="#ffb400" stroke-width="3"/><circle cx="22" cy="22" r="5" fill="#f1efe8"/><path d="M22 5v8M22 31v8M5 22h8M31 22h8" stroke="#ffb400" stroke-width="3"/></svg>
+        <svg class="card-icon" viewBox="0 0 44 44"><circle cx="22" cy="22" r="17" fill="none" stroke="#d6a85c" stroke-width="3"/><circle cx="22" cy="22" r="5" fill="#f1efe8"/><path d="M22 5v8M22 31v8M5 22h8M31 22h8" stroke="#d6a85c" stroke-width="3"/></svg>
         <h3 lang="en">Pit Stop</h3>
         <p>Mouse CPM testi. 5 ya da 10 saniyede kaç kez tıklayabilirsin? Devir saati kırmızıya dayansın.</p>
         <span class="go">Pite gir →</span>
@@ -106,8 +106,8 @@ function heroArt() {
       </defs>
       <circle cx="200" cy="200" r="180" fill="#14161b" stroke="#2c3039" stroke-width="2"/>
       <path d="M 64 290 A 150 150 0 1 1 336 290" fill="none" stroke="#22262e" stroke-width="22" stroke-linecap="round"/>
-      <path d="M 64 290 A 150 150 0 0 1 310 110" fill="none" stroke="#ffb400" stroke-width="22" stroke-linecap="round"/>
-      <path d="M 310 110 A 150 150 0 0 1 336 290" fill="none" stroke="#ff3b2f" stroke-width="22" stroke-linecap="round"/>
+      <path d="M 64 290 A 150 150 0 0 1 310 110" fill="none" stroke="#3fb489" stroke-width="22" stroke-linecap="round"/>
+      <path d="M 310 110 A 150 150 0 0 1 336 290" fill="none" stroke="#d6a85c" stroke-width="22" stroke-linecap="round"/>
       <line x1="200" y1="200" x2="318" y2="128" stroke="#f1efe8" stroke-width="6" stroke-linecap="round"/>
       <circle cx="200" cy="200" r="14" fill="#f1efe8"/>
       <rect x="80" y="300" width="240" height="20" fill="url(#chk)" opacity=".9"/>
