@@ -1,5 +1,6 @@
 import { generateWords, dailyWords, dailyKey } from './words.js';
-import { h, $, esc, gauge, carSvg, submitBlock, toast } from './ui.js';
+import { $, gauge, carSvg, submitBlock, toast } from './ui.js';
+import { createTyper } from './engine.js';
 import { localBest, saveLocalBest } from './api.js';
 
 const PREF_KEY = 'fmq.typing';
@@ -53,14 +54,17 @@ export function mount(root, { daily = false } = {}) {
     <section class="panel" id="result" hidden></section>`;
 
   const box = $('.typing-box', root);
-  const wordsEl = $('.words', box);
   const timerEl = $('.timer-big', root);
   const meCar = $('.car.me', root), ghostCar = $('.car.ghost', root), strip = $('.race-strip', root);
   const arena = $('#arena', root), resultEl = $('#result', root);
   const wpmGauge = gauge($('.wpm-gauge', root), { max: 160, unit: 'WPM' });
 
-  let s; // run state
-  let tick;
+  let tick, startAt = 0, ended = false, ghostWpm = 45;
+  const typer = createTyper(box, {
+    onStart: begin,
+    onComplete: finish,
+    more: daily ? null : () => generateWords(prefs.lang, 100)
+  });
 
   const testKey = () => (daily ? `typing-daily-${prefs.lang}` : `typing-${prefs.seconds}-${prefs.lang}`);
 
@@ -73,170 +77,56 @@ export function mount(root, { daily = false } = {}) {
 
   function reset() {
     clearInterval(tick);
-    const words = daily ? dailyWords(day, prefs.lang) : generateWords(prefs.lang, 250);
-    s = {
-      words, typed: [''], cur: 0, start: 0, ended: false,
-      keys: 0, goodKeys: 0, ghostWpm: localBest(testKey()) || 45
-    };
-    wordsEl.innerHTML = words.map((w, i) => `<span class="word" data-i="${i}"></span>`).join('') + '<span class="caret"></span>';
-    s.els = [...wordsEl.querySelectorAll('.word')];
-    s.caret = $('.caret', wordsEl);
-    s.els.forEach((_, i) => renderWord(i));
-    wordsEl.style.transform = '';
+    startAt = 0;
+    ended = false;
+    ghostWpm = localBest(testKey()) || 45;
+    typer.load(daily ? dailyWords(day, prefs.lang) : generateWords(prefs.lang, 250));
     timerEl.textContent = daily ? '0.0' : prefs.seconds;
     wpmGauge.set(0);
     moveCars(0, 0);
     arena.hidden = false;
     resultEl.hidden = true;
-    box.classList.remove('running');
-    requestAnimationFrame(placeCaret);
   }
 
-  function renderWord(i) {
-    const word = s.words[i], typed = s.typed[i] || '';
-    let html = '';
-    for (let j = 0; j < Math.max(word.length, typed.length); j++) {
-      if (j >= word.length) html += `<span class="letter extra">${esc(typed[j])}</span>`;
-      else {
-        const cls = j < typed.length ? (typed[j] === word[j] ? 'correct' : 'incorrect') : '';
-        html += `<span class="letter ${cls}">${esc(word[j])}</span>`;
-      }
-    }
-    s.els[i].innerHTML = html;
-    s.els[i].classList.toggle('error', i < s.cur && typed !== word);
-  }
-
-  function placeCaret() {
-    const wordEl = s.els[s.cur];
-    const letters = wordEl.children;
-    const n = s.typed[s.cur].length;
-    let left, top;
-    if (n < letters.length) ({ offsetLeft: left, offsetTop: top } = letters[n]);
-    else {
-      const last = letters[letters.length - 1];
-      left = last.offsetLeft + last.offsetWidth;
-      top = last.offsetTop;
-    }
-    const lineH = wordEl.offsetHeight;
-    s.caret.style.left = `${left - 1}px`;
-    s.caret.style.top = `${top + lineH * 0.22}px`;
-    // keep the active word on the second visible line
-    const shift = Math.max(0, wordEl.offsetTop - lineH);
-    wordsEl.style.transform = `translateY(${-shift}px)`;
-  }
-
-  function correctChars(includeCurrent) {
-    let n = 0;
-    for (let i = 0; i < s.cur; i++) if (s.typed[i] === s.words[i]) n += s.words[i].length + 1;
-    if (includeCurrent) {
-      const t = s.typed[s.cur], w = s.words[s.cur];
-      if (w.startsWith(t)) n += t.length;
-    }
-    return n;
-  }
-
-  const elapsed = () => (s.start ? (performance.now() - s.start) / 1000 : 0);
-  const wpmFor = (chars, secs) => (secs > 0 ? chars / 5 / (secs / 60) : 0);
+  const elapsed = () => (startAt ? (performance.now() - startAt) / 1000 : 0);
 
   function moveCars(meChars, secs) {
     const track = strip.clientWidth - 64 - 70;
-    const ghostChars = (s.ghostWpm * 5 * secs) / 60;
-    const total = daily
-      ? s.words.join(' ').length
-      : (s.ghostWpm * 5 * prefs.seconds) / 60;
+    const ghostChars = (ghostWpm * 5 * secs) / 60;
+    const total = daily ? typer.totalChars() : (ghostWpm * 5 * prefs.seconds) / 60;
     const pos = (c) => Math.min(1, c / total) * track;
     meCar.style.transform = `translateX(${pos(meChars)}px)`;
     ghostCar.style.transform = `translateX(${pos(ghostChars)}px)`;
   }
 
   function begin() {
-    s.start = performance.now();
-    box.classList.add('running');
+    startAt = performance.now();
     tick = setInterval(update, 100);
   }
 
   function update() {
     const t = elapsed();
-    const chars = correctChars(true);
+    const chars = typer.correctChars();
     if (daily) timerEl.textContent = t.toFixed(1);
     else timerEl.textContent = Math.max(0, Math.ceil(prefs.seconds - t));
-    if (t > 0.5) wpmGauge.set(wpmFor(chars, t));
+    if (t > 0.5) wpmGauge.set(chars / 5 / (t / 60));
     moveCars(chars, t);
     if (!daily && t >= prefs.seconds) finish();
   }
 
   function onKey(e) {
     if (e.key === 'Tab') { e.preventDefault(); reset(); return; }
-    if (s.ended) return;
-    if ((e.ctrlKey || e.metaKey || e.altKey) && e.key !== 'Backspace') return;
-    const word = s.words[s.cur];
-    let typed = s.typed[s.cur];
-
-    if (e.key === 'Backspace') {
-      e.preventDefault();
-      if (typed.length === 0) {
-        // allow stepping back only into a mistyped word
-        if (s.cur > 0 && s.typed[s.cur - 1] !== s.words[s.cur - 1]) {
-          s.typed.pop();
-          s.cur--;
-          renderWord(s.cur);
-        }
-      } else {
-        s.typed[s.cur] = e.ctrlKey || e.altKey ? '' : typed.slice(0, -1);
-        renderWord(s.cur);
-      }
-      placeCaret();
-      return;
-    }
-    if (e.key.length !== 1) return;
-    e.preventDefault();
-    if (!s.start) begin();
-
-    if (e.key === ' ') {
-      if (!typed) return;
-      s.keys++;
-      if (typed === word) s.goodKeys++;
-      if (s.cur === s.words.length - 1) { renderWord(s.cur); if (daily) return finish(); }
-      s.cur++;
-      s.typed.push('');
-      renderWord(s.cur - 1);
-      if (!daily && s.cur > s.words.length - 40) appendWords();
-      placeCaret();
-      return;
-    }
-
-    if (typed.length >= word.length + 8) return;
-    s.keys++;
-    if (e.key === word[typed.length]) s.goodKeys++;
-    typed += e.key;
-    s.typed[s.cur] = typed;
-    renderWord(s.cur);
-    placeCaret();
-    if (daily && s.cur === s.words.length - 1 && typed === word) finish();
-  }
-
-  function appendWords() {
-    const more = generateWords(prefs.lang, 100);
-    const start = s.words.length;
-    s.words.push(...more);
-    s.caret.insertAdjacentHTML('beforebegin', more.map((_, k) => `<span class="word" data-i="${start + k}"></span>`).join(''));
-    s.els = [...wordsEl.querySelectorAll('.word')];
-    for (let i = start; i < s.words.length; i++) renderWord(i);
+    if (!ended) typer.handleKey(e);
   }
 
   function finish() {
-    if (s.ended) return;
-    s.ended = true;
+    if (ended) return;
+    ended = true;
     clearInterval(tick);
+    typer.lock();
     const secs = daily ? elapsed() : prefs.seconds;
-    const chars = correctChars(true);
-    const wpm = Math.round(wpmFor(chars, secs) * 100) / 100;
-    const typedChars = s.typed.reduce((n, t) => n + t.length, 0) + s.cur;
-    const raw = Math.round(wpmFor(typedChars, secs) * 100) / 100;
-    const accuracy = s.keys ? Math.round((s.goodKeys / s.keys) * 1000) / 10 : 0;
-    const errors = s.keys - s.goodKeys;
-    moveCars(chars, secs);
-    showResult({ wpm, raw, accuracy, errors, secs });
+    moveCars(typer.correctChars(), secs);
+    showResult({ ...typer.stats(secs), secs });
   }
 
   function showResult({ wpm, raw, accuracy, errors, secs }) {
@@ -296,7 +186,7 @@ export function mount(root, { daily = false } = {}) {
     }
   };
   window.addEventListener('keydown', globalKey);
-  const onResize = () => s && !s.ended && placeCaret();
+  const onResize = () => !ended && typer.placeCaret();
   window.addEventListener('resize', onResize);
 
   syncControls();

@@ -1,5 +1,6 @@
 import express from 'express';
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
+import { sha256 } from './db.js';
 import { fileURLToPath } from 'node:url';
 import { CATALOG, publicCatalog, validateScore } from './catalog.js';
 import { dailyKey } from '../public/js/words.js';
@@ -8,7 +9,6 @@ const PUBLIC_DIR = fileURLToPath(new URL('../public', import.meta.url));
 const NAME_RE = /^[\p{L}\p{N}_-]{3,16}$/u;
 const PERIODS = ['day', 'week', 'all'];
 
-const sha256 = (s) => createHash('sha256').update(s).digest('hex');
 const nameKey = (name) => name.toLocaleLowerCase('tr');
 
 export function periodStart(period, now = new Date()) {
@@ -68,7 +68,11 @@ export function createApp(db, { now = () => Date.now() } = {}) {
       FROM scores WHERE player_id = ? GROUP BY test`),
     playerRecent: db.prepare(`
       SELECT test, score, details, created_at AS at FROM scores
-      WHERE player_id = ? ORDER BY created_at DESC LIMIT 15`)
+      WHERE player_id = ? ORDER BY created_at DESC LIMIT 15`),
+    playerRaces: db.prepare(`
+      SELECT COUNT(*) AS races, COUNT(CASE WHEN place = 1 THEN 1 END) AS wins,
+             COUNT(CASE WHEN place <= 3 THEN 1 END) AS podiums, MAX(wpm) AS best
+      FROM race_results WHERE player_id = ?`)
   };
 
   function auth(req) {
@@ -117,7 +121,7 @@ export function createApp(db, { now = () => Date.now() } = {}) {
       bests[row.test] = { score, runs: row.runs, rank: rankOf(row.test, 0, player.id)?.rank };
     }
     const recent = q.playerRecent.all(player.id).map((r) => ({ ...r, details: JSON.parse(r.details) }));
-    res.json({ name: player.name, since: player.created_at, bests, recent });
+    res.json({ name: player.name, since: player.created_at, bests, recent, races: q.playerRaces.get(player.id) });
   });
 
   app.post('/api/scores', rateLimit(30, 60 * 1000), (req, res) => {

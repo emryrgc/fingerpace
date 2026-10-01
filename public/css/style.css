@@ -24,6 +24,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { margin: 0; }
 body {
   min-height: 100vh;
@@ -484,4 +485,55 @@ kbd {
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- live races ---------- */
+.nav a.nav-live { color: var(--text); display: inline-flex; align-items: center; gap: 7px; }
+.nav a.nav-live::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--red);
+  box-shadow: 0 0 0 0 rgba(255, 59, 47, .7); animation: live 1.6s infinite;
+}
+@keyframes live { 70% { box-shadow: 0 0 0 7px rgba(255, 59, 47, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 59, 47, 0); } }
+.room-code { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.room-code .code {
+  font-family: var(--font-mono); font-size: 28px; letter-spacing: .2em;
+  padding: 4px 12px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); color: var(--amber);
+}
+.race-menu .card { cursor: default; }
+.race-menu .card:hover { transform: none; }
+.race-menu .go-btn { margin-top: auto; align-self: flex-start; }
+.join-row { display: flex; gap: 8px; margin-top: auto; }
+.join-row input {
+  flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--asphalt); color: var(--text);
+  font-family: var(--font-mono); font-size: 20px; letter-spacing: .2em; text-transform: uppercase;
+}
+.join-row input:focus { outline: 2px solid var(--amber); outline-offset: 1px; }
+.room-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.room-status { font-size: 18px; font-weight: 600; }
+.room-status b { color: var(--amber); }
+.race-lanes {
+  position: relative; border-radius: 12px; overflow: hidden;
+  background: #1b1d22; border: 1px solid var(--line); margin-bottom: 20px;
+}
+.race-lanes .finish {
+  position: absolute; top: 0; bottom: 0; right: 46px; width: 16px;
+  background: conic-gradient(#f4f4f4 25%, #111 0 50%, #f4f4f4 0 75%, #111 0) 0 0 / 8px 8px;
+}
+.lane { position: relative; height: 52px; border-bottom: 2px dashed rgba(255,255,255,.12); }
+.lane:last-of-type { border-bottom: 0; }
+.lane.me { background: rgba(255, 59, 47, .07); }
+.lane .car { position: absolute; left: 12px; top: 12px; width: 64px; height: 28px; transition: transform .25s linear; z-index: 1; }
+.lane-name {
+  position: absolute; left: 12px; top: 2px; font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; color: var(--muted); text-transform: uppercase; white-space: nowrap;
+}
+.lane.me .lane-name { color: var(--text); }
+.lane-tag { position: absolute; right: 132px; top: 15px; font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--text); }
+.lane-tag.gold { color: var(--amber); }
+.race-lights { text-align: center; margin-bottom: 20px; }
+.race-panel .results-title { font-size: 40px; font-style: italic; margin-bottom: 16px; }
+@media (max-width: 860px) {
+  .lane-tag { right: 128px; font-size: 11px; }
+  .room-code .code { font-size: 22px; }
 }

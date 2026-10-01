@@ -1,6 +1,9 @@
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { createHash } from 'node:crypto';
+
+export const sha256 = (s) => createHash('sha256').update(s).digest('hex');
 
 export function openDb(file) {
   if (file !== ':memory:') mkdirSync(dirname(file), { recursive: true });
@@ -25,6 +28,16 @@ export function openDb(file) {
     );
     CREATE INDEX IF NOT EXISTS scores_test_time ON scores(test, created_at);
     CREATE INDEX IF NOT EXISTS scores_player ON scores(player_id, test);
+    CREATE TABLE IF NOT EXISTS race_results (
+      id INTEGER PRIMARY KEY,
+      player_id INTEGER NOT NULL REFERENCES players(id),
+      place INTEGER,            -- NULL = did not finish
+      field INTEGER NOT NULL,   -- number of starters
+      wpm REAL,
+      accuracy REAL,
+      created_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS race_results_player ON race_results(player_id);
   `);
   return db;
 }

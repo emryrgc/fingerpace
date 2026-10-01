@@ -4,6 +4,7 @@ import * as typing from './typing.js';
 import * as reflex from './reflex.js';
 import * as clicks from './clicks.js';
 import * as board from './leaderboard.js';
+import * as race from './race.js';
 
 const view = $('#view');
 let cleanup = null;
@@ -14,6 +15,7 @@ const routes = [
   [/^\/daily$/, (r) => typing.mount(r, { daily: true }), 'typing'],
   [/^\/reflex$/, (r) => reflex.mount(r), 'reflex'],
   [/^\/clicks$/, (r) => clicks.mount(r), 'clicks'],
+  [/^\/race(?:\/([A-Za-z0-9]{5}))?$/, (r, m) => race.mount(r, { code: m[1]?.toUpperCase() }), 'race'],
   [/^\/leaderboard(?:\/([\w-]+))?$/, (r, m) => board.mount(r, { test: m[1] }), 'leaderboard'],
   [/^\/pilot\/(.+)$/, (r, m) => board.mountProfile(r, { name: decodeURIComponent(m[1]) }), 'leaderboard']
 ];
@@ -36,10 +38,10 @@ function home(root) {
       <div>
         <div class="eyebrow">Parmak motorsporları</div>
         <h1>Parmakların <em>pistte.</em></h1>
-        <p>Klavyede hız, ışıklarda refleks, farede devir. Pilot lisansını al, her gün sıfırlanan Grand Prix'de rakiplerinle aynı pistte yarış.</p>
+        <p>Klavyede hız, ışıklarda refleks, farede devir. Pilot lisansını al, rakiplerinle aynı anda aynı pistte yarış; her gün sıfırlanan Grand Prix'de podyuma çık.</p>
         <div class="hero-actions">
-          <a class="btn primary" href="#/daily">Günün yarışına katıl</a>
-          <a class="btn ghost" href="#/leaderboard">Sıralamaya bak</a>
+          <a class="btn primary" href="#/race">Canlı yarışa katıl</a>
+          <a class="btn ghost" href="#/daily">Günün Grand Prix'si</a>
         </div>
       </div>
       <div class="hero-art" aria-hidden="true">${heroArt()}</div>

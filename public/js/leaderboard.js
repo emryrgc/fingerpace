@@ -130,6 +130,13 @@ export async function mountProfile(root, { name }) {
         <div><div class="eyebrow">Pilot · lisans ${new Date(p.since).toLocaleDateString('tr-TR')}</div><h1>${esc(p.name)}</h1></div>
         ${getPilot()?.name === p.name ? '<button class="btn ghost" data-action="logout">Bu tarayıcıdan çıkış yap</button>' : ''}
       </div>
+      ${p.races?.races ? `<h2 style="font-size:28px;margin-bottom:14px">Canlı yarışlar</h2>
+      <div class="bests">
+        <div class="stat"><span>Yarış</span><b>${p.races.races}</b></div>
+        <div class="stat"><span>Galibiyet</span><b>${p.races.wins}</b></div>
+        <div class="stat"><span>Podyum</span><b>${p.races.podiums}</b></div>
+        <div class="stat"><span>En iyi yarış hızı</span><b>${p.races.best ? Math.round(p.races.best) + ' WPM' : '—'}</b></div>
+      </div>` : ''}
       <h2 style="font-size:28px;margin-bottom:14px">Kişisel rekorlar</h2>
       ${bests.length ? `<div class="bests">${bests.map(([t, b]) => `
         <a class="stat" style="text-decoration:none" href="#/leaderboard/${t}">

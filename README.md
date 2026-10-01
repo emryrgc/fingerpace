@@ -10,9 +10,15 @@
 | **Günlük Grand Prix** | WPM | Her gün (00:00 UTC) herkese aynı 40 kelimelik metin. Tek günlük sıralama. |
 | **Start Işıkları** | Tepki süresi (ms) | F1 tarzı 5 ışık, rastgele bekleme, erken kalkış cezası. 5 startın ortalaması. |
 | **Pit Stop** | CPM (dakikada tık) | 5 / 10 sn mouse tıklama testi, canlı devir saati. |
+| **Canlı Yarış** | Sıralama, WPM | 2-5 pilot aynı anda aynı metni yazar; herkes rakiplerin arabasını canlı görür. |
 
 ## Rekabet sistemi
 
+- **Canlı yarış odaları (WebSocket):**
+  - *Hızlı yarış* — bekleyen pilotlarla eşleşir; 2 pilot olunca 8 sn sonra, 5 pilot olunca hemen başlar.
+  - *Özel oda* — 5 haneli kod / davet linki; oda sahibi başlatır, bitince rövanş.
+  - Start ışıkları herkes için senkron yanar. Zamanı ve WPM'i sunucu ölçer; istemci yalnızca ne kadar yazdığını bildirir ve bu da saniyede 25 karakter tavanıyla sınırlanır.
+  - En az 2 pilotlu yarışlar profile işlenir (yarış, galibiyet, podyum, en iyi yarış hızı).
 - **Pilot lisansı:** Şifresiz kayıt — benzersiz bir pilot adı seçilir, sunucu gizli bir anahtar verir ve bu anahtar tarayıcıda saklanır.
 - **Sıralamalar:** Her test için *Bugün / Bu hafta / Tüm zamanlar*. Her pilotun en iyi skoru sayılır; podyum (P1-P3) + starting grid.
 - **Pilot profili:** Kişisel rekorlar, sıralamadaki yer ve son turlar.
@@ -38,11 +44,13 @@ server/
   index.js     giriş noktası
   app.js       Express uygulaması + REST API
   catalog.js   sıralama listesi ve skor doğrulama kuralları
+  race.js      canlı yarış odaları (WebSocket, /ws)
   db.js        SQLite şeması
 public/
   index.html   tek sayfa uygulama
   css/style.css
-  js/          app (router), typing, reflex, clicks, leaderboard, api, ui, words
+  js/          app (router), engine (ortak yazma motoru), typing, race, reflex,
+               clicks, leaderboard, api, ui, words
 test/          node:test ile API testleri
 ```
 
@@ -57,3 +65,19 @@ test/          node:test ile API testleri
 | `GET` | `/api/leaderboard/:test?period=day\|week\|all` | Sıralama |
 | `GET` | `/api/daily` | Günün anahtarı ve sıfırlanma zamanı |
 | `GET` | `/api/catalog` | Tüm sıralama tanımları |
+
+### Canlı yarış protokolü (`/ws`)
+
+İstemci → sunucu: `hello {token}`, `quick`, `create`, `join {code}`, `start`, `progress {chars}`, `finish {accuracy}`, `leave`
+Sunucu → istemci: `welcome`, `room {room}` (odanın tam durumu), `error {message, fatal?}`, `left`, `closed`
+
+## Yayına alma
+
+Uygulama **sürekli çalışan bir Node sunucusu** (WebSocket bağlantıları için) ve **kalıcı bir disk** (SQLite dosyası için) ister. Bu yüzden Vercel/Netlify gibi "serverless" platformlar uygun değildir; Railway, Render, Fly.io veya bir VPS uygundur.
+
+```bash
+docker build -t fingermcqueen .
+docker run -p 3000:3000 -v fmq-data:/data fingermcqueen
+```
+
+Veritabanı `/data` altında tutulur; platformda bu yola kalıcı bir disk/volume bağlanmalıdır.
