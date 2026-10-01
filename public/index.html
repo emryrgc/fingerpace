@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FingerMcQueen</title>
+  <meta name="description" content="Parmakların pistte: klavye hız testi, refleks testi ve mouse CPM testi. Pilot ol, sıralamada yarış.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏁</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="kerb" aria-hidden="true"></div>
+  <header class="topbar">
+    <a href="#/" class="brand" aria-label="FingerMcQueen ana sayfa">
+      <span class="brand-flag" aria-hidden="true"></span>
+      <span class="brand-name" lang="en">Finger<b>McQueen</b></span>
+    </a>
+    <nav class="nav" aria-label="Ana menü">
+      <a href="#/typing" data-nav="typing">Klavye GP</a>
+      <a href="#/reflex" data-nav="reflex">Start Işıkları</a>
+      <a href="#/clicks" data-nav="clicks">Pit Stop</a>
+      <a href="#/leaderboard" data-nav="leaderboard">Sıralama</a>
+    </nav>
+    <button class="pilot-chip" id="pilot-chip" type="button">Pilot ol</button>
+  </header>
+
+  <main id="view" tabindex="-1"></main>
+
+  <footer class="footer">
+    <span>FingerMcQueen · parmakların pistte</span>
+    <span class="muted">Sıralamalar her gün 00:00 UTC'de yeni tura başlar.</span>
+  </footer>
+
+  <dialog id="pilot-dialog" class="dialog">
+    <form method="dialog" id="pilot-form">
+      <h2>Pilot lisansı</h2>
+      <p class="muted">Sıralamaya girmek için bir pilot adı seç. Şifre yok — lisansın bu tarayıcıda saklanır.</p>
+      <label for="pilot-name">Pilot adı</label>
+      <input id="pilot-name" name="name" autocomplete="nickname" minlength="3" maxlength="16" required
+             placeholder="ör. ŞimşekParmak">
+      <p class="form-error" id="pilot-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" value="cancel" id="pilot-cancel">Vazgeç</button>
+        <button type="submit" class="btn primary">Lisansı al</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
