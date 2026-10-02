@@ -3,6 +3,7 @@ import { localBest, saveLocalBest } from './api.js';
 
 const ATTEMPTS = 5;
 const LIGHT_INTERVAL = 900;
+const MIN_HUMAN_MS = 100; // faster than this is anticipation, not reaction (as in F1)
 
 export function mount(root) {
   root.innerHTML = `
@@ -11,7 +12,7 @@ export function mount(root) {
         <div class="eyebrow">Start Işıkları</div>
         <h1>Işıklar sönünce kalk</h1>
       </div>
-      <p class="muted" style="max-width:38ch;margin:0">Beş kırmızı ışık tek tek yanar. Hepsi söndüğü an tıkla ya da <kbd>Boşluk</kbd>'a bas. Erken kalkış = ceza. ${ATTEMPTS} start, ortalaman yazılır.</p>
+      <p class="muted" style="max-width:38ch;margin:0">Beş kırmızı ışık tek tek yanar. Hepsi söndüğü an tıkla ya da <kbd>Boşluk</kbd>'a bas. Erken kalkış = ceza. ${ATTEMPTS} start at, en iyi startın sıralamaya girer.</p>
     </div>
     <section class="lights-stage" tabindex="0" aria-label="Start ışıkları — tıkla veya boşluk tuşuna bas">
       <div class="gantry">
@@ -81,6 +82,12 @@ export function mount(root) {
     }
     if (phase === 'go') {
       const rt = Math.round(performance.now() - goAt);
+      if (rt < MIN_HUMAN_MS) {
+        phase = 'result';
+        pods.forEach((p) => p.classList.add('on'));
+        setMsg('Erken kalkış!', 'red', `${rt} ms — ışığı görmeden basmışsın. Bu start sayılmadı.`);
+        return;
+      }
       results.push(rt);
       renderAttempts();
       if (results.length < ATTEMPTS) {
@@ -94,11 +101,11 @@ export function mount(root) {
 
   function complete() {
     phase = 'done';
-    const avg = Math.round(results.reduce((a, b) => a + b, 0) / results.length);
     const best = Math.min(...results);
-    const { improved, prev } = saveLocalBest('reflex', avg, 'low');
-    setMsg(`${avg} ms`, 'green', `Ortalama · en iyi start ${best} ms${improved && prev != null ? ' · YENİ REKOR 🏆' : ''} · yeni seri için tıkla`);
-    submitBlock(status, 'reflex', avg, { best, attempts: results.length, runs: results });
+    const avg = Math.round(results.reduce((a, b) => a + b, 0) / results.length);
+    const { improved, prev } = saveLocalBest('reflex', best, 'low');
+    setMsg(`${best} ms`, 'green', `En iyi start${improved && prev != null ? ' · YENİ REKOR 🏆' : ''} · ortalaman ${avg} ms · yeni seri için tıkla`);
+    submitBlock(status, 'reflex', best, { best, avg, attempts: results.length, runs: results });
   }
 
   const onPointer = (e) => { if (e.button === 0 || e.pointerType !== 'mouse') { e.preventDefault(); press(); } };

@@ -33,7 +33,7 @@ export function labelOf(test) {
 const fmt = (v) => (Number.isInteger(v) ? v : v.toFixed(1));
 
 function extraOf(test, d) {
-  if (test === 'reflex') return d.best ? `en iyi ${d.best} ms` : '';
+  if (test === 'reflex') return d.avg ? `ort. ${d.avg} ms` : '';
   if (test.startsWith('cpm')) return d.clicks ? `${d.clicks} tık` : '';
   return d.accuracy != null ? `%${d.accuracy}${d.time ? ` · ${d.time} sn` : ''}` : '';
 }

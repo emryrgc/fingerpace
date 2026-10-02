@@ -1,4 +1,6 @@
-# 🏁 FingerMcQueen
+# 🏁 FingerGP
+
+**[fingergp.com](https://fingergp.com)**
 
 **Parmakların pistte.** Klavye hız testi, refleks testi ve mouse CPM testi — hepsi motorsporları temalı ve rekabetçi bir sıralama sistemiyle.
 
@@ -8,7 +10,7 @@
 | --- | --- | --- |
 | **Klavye GP** | WPM, doğruluk, ham hız | 15 / 30 / 60 sn, Türkçe & İngilizce. Kendi rekorunun "hayalet arabası"na karşı yarışırsın. |
 | **Günlük Grand Prix** | WPM | Her gün (00:00 UTC) herkese aynı 40 kelimelik metin. Tek günlük sıralama. |
-| **Start Işıkları** | Tepki süresi (ms) | F1 tarzı 5 ışık, rastgele bekleme, erken kalkış cezası. 5 startın ortalaması. |
+| **Start Işıkları** | Tepki süresi (ms) | F1 tarzı 5 ışık, rastgele bekleme, erken kalkış cezası (100 ms altı da erken kalkış). 5 starttan en iyisi sayılır. |
 | **Pit Stop** | CPM (dakikada tık) | 5 / 10 sn mouse tıklama testi, canlı devir saati. |
 | **Canlı Yarış** | Sıralama, WPM | 2-5 pilot aynı anda aynı metni yazar; herkes rakiplerin arabasını canlı görür. |
 
@@ -22,7 +24,7 @@
 - **Pilot lisansı:** Şifresiz kayıt — benzersiz bir pilot adı seçilir, sunucu gizli bir anahtar verir ve bu anahtar tarayıcıda saklanır.
 - **Sıralamalar:** Her test için *Bugün / Bu hafta / Tüm zamanlar*. Her pilotun en iyi skoru sayılır; podyum (P1-P3) + starting grid.
 - **Pilot profili:** Kişisel rekorlar, sıralamadaki yer ve son turlar.
-- **Temel hile koruması:** İnsanüstü skorlar (ör. >300 WPM, <80 ms ortalama tepki, >25 tık/sn) ve tutarsız sonuçlar sunucuda reddedilir; IP başına hız limiti vardır.
+- **Temel hile koruması:** İnsanüstü skorlar (ör. >300 WPM, <100 ms tepki, >25 tık/sn) ve tutarsız sonuçlar sunucuda reddedilir; IP başına hız limiti vardır.
 
 ## Çalıştırma
 
@@ -76,8 +78,8 @@ Sunucu → istemci: `welcome`, `room {room}` (odanın tam durumu), `error {messa
 Uygulama **sürekli çalışan bir Node sunucusu** (WebSocket bağlantıları için) ve **kalıcı bir disk** (SQLite dosyası için) ister. Bu yüzden Vercel/Netlify gibi "serverless" platformlar uygun değildir; Railway, Render, Fly.io veya bir VPS uygundur.
 
 ```bash
-docker build -t fingermcqueen .
-docker run -p 3000:3000 -v fmq-data:/data fingermcqueen
+docker build -t fingergp .
+docker run -p 3000:3000 -v fingergp-data:/data fingergp
 ```
 
 Veritabanı `/data` altında tutulur; platformda bu yola kalıcı bir disk/volume bağlanmalıdır.
@@ -90,7 +92,7 @@ Depoda `Dockerfile` ve `railway.json` hazır; Railway ikisini de otomatik algıl
 2. Servisin **Variables** sekmesine `PORT=3000` ekle (`TRUST_PROXY=1` ve `DB_FILE` Dockerfile'da zaten tanımlı).
 3. Servise bir **Volume** ekle, bağlama yolu (mount path): `/data`. Bu olmazsa her yeniden yayında skorlar silinir.
 4. **Settings → Networking → Generate Domain** (port sorulursa `3000`).
-5. Deploy loglarında `🏁 FingerMcQueen pistte` satırını gör, verilen adresi aç.
+5. Deploy loglarında `🏁 FingerGP pistte` satırını gör, verilen adresi aç.
 
 > **Tek kopya (replica) çalıştır.** Yarış odaları sunucu belleğinde, veritabanı da tek bir SQLite dosyasında tutulur; birden fazla kopya ölçeklemek odaları böler.
 

@@ -21,9 +21,14 @@ for (const lang of LANGS) {
 }
 
 catalog.reflex = {
-  group: 'reflex', better: 'low', unit: 'ms', min: 80, max: 1500,
+  group: 'reflex', better: 'low', unit: 'ms', min: 100, max: 1500,
   label: 'Start Işıkları',
-  validate: (d) => num(d.best, 60, 1500) && num(d.attempts, 5, 5)
+  // score is the best of five starts; every start must be a plausible human reaction
+  validate: (d) =>
+    num(d.attempts, 5, 5) &&
+    Array.isArray(d.runs) && d.runs.length === 5 &&
+    d.runs.every((r) => num(r, 100, 3000)) &&
+    Math.min(...d.runs) === d._score && d.best === d._score
 };
 
 for (const seconds of [5, 10]) {

@@ -1,8 +1,8 @@
 {
-  "name": "fingermcqueen",
+  "name": "fingergp",
   "version": "0.1.0",
   "private": true,
-  "description": "FingerMcQueen — klavye hızı, refleks ve mouse CPM testleri; yarış temalı sıralama sistemiyle.",
+  "description": "FingerGP — klavye hızı, refleks ve mouse CPM testleri; yarış temalı sıralama sistemiyle.",
   "type": "module",
   "main": "server/index.js",
   "engines": {

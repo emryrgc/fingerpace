@@ -37,6 +37,12 @@ export function createApp(db, { now = () => Date.now() } = {}) {
   // see each visitor's real IP instead of the proxy's.
   const hops = Number(process.env.TRUST_PROXY);
   app.set('trust proxy', Number.isInteger(hops) && hops > 0 ? hops : 'loopback');
+  // www.fingergp.com → fingergp.com, so links and logins live on one origin
+  app.use((req, res, next) => {
+    const host = req.get('host') || '';
+    if (host.startsWith('www.')) return res.redirect(301, `https://${host.slice(4)}${req.originalUrl}`);
+    next();
+  });
   app.use(express.json({ limit: '4kb' }));
 
   const q = {
