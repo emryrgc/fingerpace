@@ -72,17 +72,19 @@ test('impossible or malformed results are rejected', async (t) => {
   assert.equal((await post('nope', 1, {})).status, 400);
 });
 
-test('www host redirects to the bare domain', async (t) => {
+test('the other spelling of CANONICAL_HOST redirects to it', async (t) => {
+  process.env.CANONICAL_HOST = 'www.fingergp.com';
+  t.after(() => delete process.env.CANONICAL_HOST);
   const app = createApp(openDb(':memory:'));
   const server = app.listen(0);
   await new Promise((r) => server.once('listening', r));
   t.after(() => server.close());
   const { request } = await import('node:http');
   const res = await new Promise((resolve) => request({
-    port: server.address().port, path: '/api/daily?x=1', headers: { host: 'www.fingergp.com' }
+    port: server.address().port, path: '/api/daily?x=1', headers: { host: 'fingergp.com' }
   }, resolve).end());
   assert.equal(res.statusCode, 301);
-  assert.equal(res.headers.location, 'https://fingergp.com/api/daily?x=1');
+  assert.equal(res.headers.location, 'https://www.fingergp.com/api/daily?x=1');
 });
 
 test('period windows and daily text are deterministic', () => {

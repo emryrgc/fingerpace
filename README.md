@@ -1,6 +1,6 @@
 # 🏁 FingerGP
 
-**[fingergp.com](https://fingergp.com)**
+**[www.fingergp.com](https://www.fingergp.com)**
 
 **Parmakların pistte.** Klavye hız testi, refleks testi ve mouse CPM testi — hepsi motorsporları temalı ve rekabetçi bir sıralama sistemiyle.
 
@@ -96,4 +96,9 @@ Depoda `Dockerfile` ve `railway.json` hazır; Railway ikisini de otomatik algıl
 
 > **Tek kopya (replica) çalıştır.** Yarış odaları sunucu belleğinde, veritabanı da tek bir SQLite dosyasında tutulur; birden fazla kopya ölçeklemek odaları böler.
 
-Ortam değişkenleri: `PORT`, `DB_FILE`, `TRUST_PROXY` (proxy arkasında `1`; gerçek ziyaretçi IP'si hız limitinde kullanılır). Sağlık kontrolü: `GET /api/health`.
+Ortam değişkenleri: `PORT`, `DB_FILE`, `TRUST_PROXY` (proxy arkasında `1`; gerçek ziyaretçi IP'si hız limitinde kullanılır), `CANONICAL_HOST` (ör. `www.fingergp.com`; çıplak/www diğer yazımı buraya 301 ile yönlenir). Sağlık kontrolü: `GET /api/health`.
+
+#### Alan adı (GoDaddy)
+
+GoDaddy kök alan adına (`@`) CNAME/ALIAS desteklemediği için site `www.fingergp.com` üzerinden yayınlanır:
+Railway'e `www.fingergp.com` eklenir → GoDaddy'de `www` CNAME kaydı Railway'in verdiği hedefe çevrilir → `fingergp.com` GoDaddy *Yönlendirme* ile `https://www.fingergp.com`'a kalıcı (301) yönlendirilir.
