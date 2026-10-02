@@ -1,4 +1,4 @@
-import { $, $$, carSvg, esc, fmtTime, toast } from './ui.js';
+import { $, $$, esc, fmtTime, toast } from './ui.js';
 import { getPilot, onPilotChange, register, verifyPilot, leaderboard, daily as fetchDaily } from './api.js';
 import * as typing from './typing.js';
 import * as reflex from './reflex.js';
@@ -96,24 +96,12 @@ function home(root) {
 }
 
 function heroArt() {
-  // speedometer silhouette with a car crossing the line
   return `
-    <svg viewBox="0 0 400 400" style="width:100%;height:100%">
-      <defs>
-        <pattern id="chk" width="20" height="20" patternUnits="userSpaceOnUse">
-          <rect width="10" height="10" fill="#f1efe8"/><rect x="10" y="10" width="10" height="10" fill="#f1efe8"/>
-        </pattern>
-      </defs>
-      <circle cx="200" cy="200" r="180" fill="#14161b" stroke="#2c3039" stroke-width="2"/>
-      <path d="M 64 290 A 150 150 0 1 1 336 290" fill="none" stroke="#22262e" stroke-width="22" stroke-linecap="round"/>
-      <path d="M 64 290 A 150 150 0 0 1 310 110" fill="none" stroke="#3fb489" stroke-width="22" stroke-linecap="round"/>
-      <path d="M 310 110 A 150 150 0 0 1 336 290" fill="none" stroke="#d6a85c" stroke-width="22" stroke-linecap="round"/>
-      <line x1="200" y1="200" x2="318" y2="128" stroke="#f1efe8" stroke-width="6" stroke-linecap="round"/>
-      <circle cx="200" cy="200" r="14" fill="#f1efe8"/>
-      <rect x="80" y="300" width="240" height="20" fill="url(#chk)" opacity=".9"/>
-      <g transform="translate(150 255) scale(1.6)">${carSvg().replace(/<\/?svg[^>]*>/g, '')}</g>
-      <text x="200" y="372" text-anchor="middle" font-family="Big Shoulders Display, sans-serif" font-weight="900" font-size="28" fill="#8d929c" letter-spacing="4">WPM · MS · CPM</text>
-    </svg>`;
+    <div class="hero-logo">
+      <img src="/img/logo.png" alt="" width="640" height="296">
+      <div class="track"></div>
+      <div class="tagline">WPM · MS · CPM</div>
+    </div>`;
 }
 
 // ---------- pilot license ----------

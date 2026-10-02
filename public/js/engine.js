@@ -43,16 +43,13 @@ export function createTyper(box, { onStart, onComplete, more } = {}) {
     const letters = wordEl.children;
     if (!letters.length) return;
     const n = s.typed[s.cur].length;
-    let left, top;
-    if (n < letters.length) ({ offsetLeft: left, offsetTop: top } = letters[n]);
-    else {
-      const last = letters[letters.length - 1];
-      left = last.offsetLeft + last.offsetWidth;
-      top = last.offsetTop;
-    }
+    const ref = letters[Math.min(n, letters.length - 1)];
+    const left = n < letters.length ? ref.offsetLeft : ref.offsetLeft + ref.offsetWidth;
+    // centre the caret on the glyph box itself, not on the (taller) line box
+    const top = ref.offsetTop + (ref.offsetHeight - s.caret.offsetHeight) / 2;
     const lineH = wordEl.offsetHeight;
     s.caret.style.left = `${left - 1}px`;
-    s.caret.style.top = `${top + lineH * 0.22}px`;
+    s.caret.style.top = `${top}px`;
     // keep the active word on the second visible line
     wordsEl.style.transform = `translateY(${-Math.max(0, wordEl.offsetTop - lineH)}px)`;
   }

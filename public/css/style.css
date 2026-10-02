@@ -75,12 +75,7 @@ h1, h2, h3 {
   z-index: 10;
 }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.brand-flag {
-  width: 30px; height: 22px; border-radius: 3px;
-  background: conic-gradient(#f4f4f4 25%, #111 0 50%, #f4f4f4 0 75%, #111 0) 0 0 / 10px 10px;
-  transform: skewX(-12deg);
-  box-shadow: 0 0 0 2px #f4f4f4;
-}
+.brand-logo { height: 34px; width: auto; display: block; filter: drop-shadow(0 2px 6px rgba(var(--accent-rgb), .25)); }
 .brand-name {
   font-family: var(--font-display);
   font-weight: 800;
@@ -190,6 +185,19 @@ kbd {
 .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .hero-art { position: relative; aspect-ratio: 1; max-width: 420px; justify-self: center; width: 100%; }
 .hero-art svg { display: block; }
+.hero-logo { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; height: 100%; }
+.hero-logo img {
+  width: 100%; height: auto;
+  filter: drop-shadow(0 18px 40px rgba(var(--accent-rgb), .22));
+  animation: idle-rev 3.2s ease-in-out infinite;
+}
+@keyframes idle-rev { 50% { transform: translateY(-6px) rotate(-1deg); } }
+.hero-logo .track {
+  width: 78%; height: 16px; border-radius: 2px; opacity: .9;
+  background: conic-gradient(var(--text) 25%, #111 0 50%, var(--text) 0 75%, #111 0) 0 0 / 16px 16px;
+  transform: skewX(-18deg);
+}
+.hero-logo .tagline { white-space: nowrap; font-family: var(--font-display); font-weight: 900; font-size: 26px; letter-spacing: .16em; color: var(--muted); }
 
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 40px; }
 .card {
@@ -296,7 +304,7 @@ kbd {
 .letter.incorrect { color: var(--danger); }
 .letter.extra { color: var(--danger-dim); }
 .caret {
-  position: absolute; width: 3px; height: 1.3em;
+  position: absolute; width: 3px; height: 1.15em;
   background: var(--brass); border-radius: 2px;
   transition: left .08s, top .08s;
   animation: blink 1s steps(1) infinite;
@@ -471,8 +479,10 @@ kbd {
   .topbar { flex-wrap: wrap; gap: 10px 16px; }
   .nav { order: 3; width: 100%; margin: 0; overflow-x: auto; }
   .pilot-chip { margin-left: auto; }
-  .brand-name { font-size: 20px; }
-  .brand-flag { width: 24px; height: 18px; }
+  .brand-name { font-size: 18px; }
+  .brand { gap: 8px; }
+  .brand-logo { height: 22px; }
+  .hero-logo .tagline { font-size: 18px; }
   .pilot-chip { padding: 6px 12px 6px 10px; font-size: 14px; }
   .nav a { padding: 8px 10px; font-size: 14px; }
   .race-strip .lane-label { display: none; }
