@@ -43,8 +43,9 @@ test('pilot registration, score submission and leaderboard ordering', async (t) 
   assert.equal(board.data.me.rank, 2);
 
   // lower is better for reflex
-  await post(a.data.token, 'reflex', 210, { best: 210, avg: 240, attempts: 5, runs: [210, 230, 250, 240, 270] });
-  await post(b.data.token, 'reflex', 170, { best: 170, avg: 190, attempts: 5, runs: [170, 180, 200, 190, 210] });
+  await post(a.data.token, 'reflex', 210, {});
+  await post(a.data.token, 'reflex', 260, {});
+  await post(b.data.token, 'reflex', 170, {});
   const reflex = await call('/api/leaderboard/reflex');
   assert.deepEqual(reflex.data.rows.map((x) => x.name), ['Hızlı', 'Şimşek_1']);
 
@@ -61,9 +62,8 @@ test('impossible or malformed results are rejected', async (t) => {
 
   assert.equal((await post('typing-30-tr', 400, { accuracy: 99, raw: 400 })).status, 400);
   assert.equal((await post('typing-30-tr', 90, { accuracy: 50, raw: 120 })).status, 400);
-  assert.equal((await post('reflex', 40, { best: 40, attempts: 5, runs: [40, 200, 200, 200, 200] })).status, 400, 'anticipation, not reaction');
-  assert.equal((await post('reflex', 150, { best: 150, attempts: 5, runs: [180, 200, 200, 200, 200] })).status, 400, 'best must match the runs');
-  assert.equal((await post('reflex', 180, { best: 180, attempts: 5, runs: [180, 200, 200, 200, 200] })).status, 201);
+  assert.equal((await post('reflex', 40, {})).status, 400, 'anticipation, not reaction');
+  assert.equal((await post('reflex', 180, {})).status, 201);
   assert.equal((await post('cpm-5', 1800, { clicks: 150 })).status, 400);
   assert.equal((await post('cpm-5', 600, { clicks: 40 })).status, 400, 'cpm must match clicks');
   assert.equal((await post('cpm-5', 480, { clicks: 40 })).status, 201);

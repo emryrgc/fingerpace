@@ -33,7 +33,7 @@ export function labelOf(test) {
 const fmt = (v) => (Number.isInteger(v) ? v : v.toFixed(1));
 
 function extraOf(test, d) {
-  if (test === 'reflex') return d.avg ? `ort. ${d.avg} ms` : '';
+  if (test === 'reflex') return '';
   if (test.startsWith('cpm')) return d.clicks ? `${d.clicks} tık` : '';
   return d.accuracy != null ? `%${d.accuracy}${d.time ? ` · ${d.time} sn` : ''}` : '';
 }
@@ -82,7 +82,7 @@ export function mount(root, { test } = {}) {
       if (!alive || build(f) !== key) return;
       board.innerHTML = boardHtml(key, data);
     } catch (e) {
-      board.innerHTML = `<p class="empty-state">⚠️ ${esc(e.message)}</p>`;
+      board.innerHTML = `<p class="empty-state">${esc(e.message)}</p>`;
     }
   }
 
@@ -155,6 +155,6 @@ export async function mountProfile(root, { name }) {
       location.hash = '#/';
     };
   } catch (e) {
-    root.innerHTML = `<p class="empty-state">⚠️ ${esc(e.message)}</p>`;
+    root.innerHTML = `<p class="empty-state">${esc(e.message)}</p>`;
   }
 }

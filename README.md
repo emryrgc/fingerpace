@@ -1,4 +1,4 @@
-# 🏁 FingerGP
+# FingerGP
 
 **[www.fingergp.com](https://www.fingergp.com)**
 
@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | **Klavye GP** | WPM, doğruluk, ham hız | 15 / 30 / 60 sn, Türkçe & İngilizce. Kendi rekorunun "hayalet arabası"na karşı yarışırsın. |
 | **Günlük Grand Prix** | WPM | Her gün (00:00 UTC) herkese aynı 40 kelimelik metin. Tek günlük sıralama. |
-| **Start Işıkları** | Tepki süresi (ms) | F1 tarzı 5 ışık, rastgele bekleme, erken kalkış cezası (100 ms altı da erken kalkış). 5 starttan en iyisi sayılır. |
+| **Start Işıkları** | Tepki süresi (ms) | F1 tarzı 5 ışık, rastgele bekleme. Her start ayrı bir oyun; en iyi tepki süresi sıralamaya girer (100 ms altı erken kalkış sayılır). |
 | **Pit Stop** | CPM (dakikada tık) | 5 / 10 sn mouse tıklama testi, canlı devir saati. |
 | **Canlı Yarış** | Sıralama, WPM | 2-5 pilot aynı anda aynı metni yazar; herkes rakiplerin arabasını canlı görür. |
 
@@ -92,7 +92,7 @@ Depoda `Dockerfile` ve `railway.json` hazır; Railway ikisini de otomatik algıl
 2. Servisin **Variables** sekmesine `PORT=3000` ekle (`TRUST_PROXY=1` ve `DB_FILE` Dockerfile'da zaten tanımlı).
 3. Servise bir **Volume** ekle, bağlama yolu (mount path): `/data`. Bu olmazsa her yeniden yayında skorlar silinir.
 4. **Settings → Networking → Generate Domain** (port sorulursa `3000`).
-5. Deploy loglarında `🏁 FingerGP pistte` satırını gör, verilen adresi aç.
+5. Deploy loglarında `FingerGP pistte` satırını gör, verilen adresi aç.
 
 > **Tek kopya (replica) çalıştır.** Yarış odaları sunucu belleğinde, veritabanı da tek bir SQLite dosyasında tutulur; birden fazla kopya ölçeklemek odaları böler.
 

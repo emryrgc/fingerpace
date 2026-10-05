@@ -1,6 +1,7 @@
 import { $, esc, carSvg, gauge, toast } from './ui.js';
 import { getPilot } from './api.js';
 import { createTyper } from './engine.js';
+import { soundToggle } from './sound.js';
 
 const CAR_COLORS = ['#3fb489', '#d6a85c', '#6fa8dc', '#e2654f', '#b7a3e0'];
 const COUNTDOWN_LIGHTS = 5;
@@ -90,6 +91,7 @@ export function mount(root, { code } = {}) {
   const lightsEl = $('.race-lights', root), resultsEl = $('.race-results', root), typingEl = $('.race-typing', root);
   const box = $('.typing-box', root), timerEl = $('.timer-big', root), hintEl = $('.race-hint', root);
   const focusMsg = $('.focus-msg', box);
+  $('.room-bar .controls', root).prepend(soundToggle());
   const btn = (a) => $(`[data-action=${a}]`, root);
   const wpmGauge = gauge($('.wpm-gauge', root), { max: 160, unit: 'WPM' });
 
@@ -213,7 +215,7 @@ export function mount(root, { code } = {}) {
       laneKey = key;
       lanesEl.innerHTML = r.players.map((p, i) => `
         <div class="lane ${p.name === pilot.name ? 'me' : ''}" data-name="${esc(p.name)}">
-          <span class="lane-name">${esc(p.name)}${p.name === r.host && !r.isPublic ? ' <small>★</small>' : ''}</span>
+          <span class="lane-name">${esc(p.name)}${p.name === r.host && !r.isPublic ? ' <small class="muted">· oda sahibi</small>' : ''}</span>
           <div class="car">${carSvg(CAR_COLORS[i % CAR_COLORS.length])}</div>
           <span class="lane-tag"></span>
         </div>`).join('') + '<div class="finish"></div>';
@@ -235,7 +237,7 @@ export function mount(root, { code } = {}) {
     const ordered = [...r.players].filter((p) => p.place || p.dnf).sort((a, b) => (a.place || 99) - (b.place || 99));
     const counted = ordered.length >= 2;
     resultsEl.innerHTML = `
-      <h2 class="results-title">Damalı bayrak 🏁</h2>
+      <h2 class="results-title">Damalı bayrak</h2>
       <ol class="grid-list">${ordered.map((p) => `
         <li class="${p.name === pilot.name ? 'me' : ''}">
           <span class="pos">${p.place ? `P${p.place}` : 'DNF'}</span>

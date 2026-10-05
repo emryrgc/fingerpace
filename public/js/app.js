@@ -126,7 +126,7 @@ form.addEventListener('submit', async (e) => {
   try {
     const p = await register(nameInput.value.trim());
     dialog.close();
-    toast(`Hoş geldin, ${p.name}! Lisansın hazır. 🏁`);
+    toast(`Hoş geldin, ${p.name}! Lisansın hazır.`);
     afterRegister?.();
   } catch (err) {
     errEl.textContent = err.message;

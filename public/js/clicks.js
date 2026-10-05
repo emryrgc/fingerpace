@@ -78,7 +78,7 @@ export function mount(root) {
     const cps = (clicks / seconds).toFixed(2);
     const { improved, prev } = saveLocalBest(`cpm-${seconds}`, cpm);
     countEl.textContent = `${cpm} CPM`;
-    sub.textContent = `${clicks} tık · ${cps} tık/sn${improved && prev != null ? ' · YENİ REKOR 🏆' : ''} · tekrar için tıkla`;
+    sub.textContent = `${clicks} tık · ${cps} tık/sn${improved && prev != null ? ' · YENİ REKOR' : ''} · tekrar için tıkla`;
     submitBlock(status, `cpm-${seconds}`, cpm, { clicks });
   }
 
@@ -103,7 +103,7 @@ export function mount(root) {
       phase = 'running';
       start = performance.now();
       pad.classList.add('running');
-      sub.textContent = 'Devam! Devam!';
+      sub.textContent = '';
       tick = setInterval(update, 50);
     }
     clicks++;

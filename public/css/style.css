@@ -168,7 +168,12 @@ kbd {
   font-weight: 600; font-size: 14px; color: var(--muted); cursor: pointer;
 }
 .segmented button[aria-pressed="true"] { background: var(--panel-2); color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
-.controls { display: flex; flex-wrap: wrap; gap: 10px; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.sound-toggle {
+  border: 1px solid var(--line); background: var(--panel); color: var(--muted);
+  border-radius: 10px; padding: 9px 14px; font-weight: 600; font-size: 14px; cursor: pointer;
+}
+.sound-toggle[aria-pressed="true"] { color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
 .panel {
   background: linear-gradient(180deg, var(--panel), var(--asphalt-2));
   border: 1px solid var(--line);
@@ -359,19 +364,18 @@ kbd {
   background: radial-gradient(circle at 35% 35%, #ff8a80, var(--signal) 45%, #b3140b);
   box-shadow: 0 0 28px rgba(255, 59, 47, .8), inset 0 -4px 10px rgba(0,0,0,.3);
 }
-.lights-stage.go .bulb { background: radial-gradient(circle at 35% 35%, #22402d, #0a1a10); }
+/* lights out → neon green "go" */
+.lights-stage.go .bulb.lit {
+  background: radial-gradient(circle at 35% 35%, #d4ffe4, #39ff88 42%, #10b85a);
+  box-shadow: 0 0 30px rgba(57, 255, 136, .85), 0 0 60px rgba(57, 255, 136, .35), inset 0 -4px 10px rgba(0,0,0,.25);
+}
+.lights-stage.go .bulb:not(.lit) { background: radial-gradient(circle at 35% 35%, #1c3a28, #0a1a10); }
+.stage-msg .big.green { color: #39ff88; text-shadow: 0 0 18px rgba(57, 255, 136, .45); }
 .stage-msg { margin-top: 26px; min-height: 92px; }
 .stage-msg .big { font-family: var(--font-display); font-weight: 900; font-size: clamp(40px, 7vw, 72px); font-style: italic; line-height: 1; }
-.stage-msg .big.green { color: var(--accent); }
 .stage-msg .big.red { color: var(--danger); }
-.attempts { display: flex; justify-content: center; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
-.attempt {
-  min-width: 84px; padding: 8px 10px; border-radius: 8px;
-  background: var(--asphalt); border: 1px solid var(--line);
-  font-family: var(--font-mono); font-size: 14px; color: var(--muted);
-}
-.attempt.done { color: var(--text); border-color: var(--accent); }
-.attempt.best { color: var(--accent); }
+.record { margin-top: 18px; font-size: 15px; color: var(--muted); min-height: 1.5em; }
+.record b { color: var(--brass); font-family: var(--font-mono); font-size: 18px; }
 
 /* ---------- clicks ---------- */
 .pit-layout { display: grid; grid-template-columns: 1fr 260px; gap: 24px; align-items: center; }

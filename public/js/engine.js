@@ -1,4 +1,5 @@
 import { esc } from './ui.js';
+import { keySound } from './sound.js';
 
 const wpmFor = (chars, secs) => (secs > 0 ? chars / 5 / (secs / 60) : 0);
 
@@ -13,7 +14,7 @@ export function createTyper(box, { onStart, onComplete, more } = {}) {
   let s;
 
   function load(words) {
-    s = { words, typed: [''], cur: 0, keys: 0, goodKeys: 0, started: false, locked: false, done: false };
+    s = { words, typed: [''], cur: 0, keys: 0, goodKeys: 0, strokes: 0, started: false, locked: false, done: false };
     wordsEl.innerHTML = words.map(() => '<span class="word"></span>').join('') + '<span class="caret"></span>';
     s.els = [...wordsEl.querySelectorAll('.word')];
     s.caret = wordsEl.querySelector('.caret');
@@ -69,7 +70,8 @@ export function createTyper(box, { onStart, onComplete, more } = {}) {
       wpm: Math.round(wpmFor(correctChars(), secs) * 100) / 100,
       raw: Math.round(wpmFor(typedChars, secs) * 100) / 100,
       accuracy: s.keys ? Math.round((s.goodKeys / s.keys) * 1000) / 10 : 0,
-      errors: s.keys - s.goodKeys
+      errors: s.keys - s.goodKeys,
+      strokes: s.strokes // every key press that did something, Backspace included
     };
   }
 
@@ -96,6 +98,7 @@ export function createTyper(box, { onStart, onComplete, more } = {}) {
 
     if (e.key === 'Backspace') {
       e.preventDefault();
+      if (s.started) { s.strokes++; keySound('back'); }
       if (typed.length === 0) {
         // allow stepping back only into a mistyped word
         if (s.cur > 0 && s.typed[s.cur - 1] !== s.words[s.cur - 1]) {
@@ -121,6 +124,8 @@ export function createTyper(box, { onStart, onComplete, more } = {}) {
     if (e.key === ' ') {
       if (!typed) return true;
       s.keys++;
+      s.strokes++;
+      keySound('space');
       if (typed === word) s.goodKeys++;
       if (s.cur === s.words.length - 1) {
         if (!more) { renderWord(s.cur); complete(); }
@@ -136,7 +141,10 @@ export function createTyper(box, { onStart, onComplete, more } = {}) {
 
     if (typed.length >= word.length + 8) return true;
     s.keys++;
-    if (e.key === word[typed.length]) s.goodKeys++;
+    s.strokes++;
+    const correct = e.key === word[typed.length];
+    keySound(correct ? 'key' : 'error');
+    if (correct) s.goodKeys++;
     typed += e.key;
     s.typed[s.cur] = typed;
     renderWord(s.cur);

@@ -1,6 +1,7 @@
 import { generateWords, dailyWords, dailyKey } from './words.js';
 import { $, gauge, carSvg, submitBlock, toast } from './ui.js';
 import { createTyper } from './engine.js';
+import { soundToggle } from './sound.js';
 import { localBest, saveLocalBest } from './api.js';
 
 const PREF_KEY = 'fmq.typing';
@@ -53,6 +54,7 @@ export function mount(root, { daily = false } = {}) {
     </section>
     <section class="panel" id="result" hidden></section>`;
 
+  $('.page-head .controls', root).append(soundToggle());
   const box = $('.typing-box', root);
   const timerEl = $('.timer-big', root);
   const meCar = $('.car.me', root), ghostCar = $('.car.ghost', root), strip = $('.race-strip', root);
@@ -129,7 +131,7 @@ export function mount(root, { daily = false } = {}) {
     showResult({ ...typer.stats(secs), secs });
   }
 
-  function showResult({ wpm, raw, accuracy, errors, secs }) {
+  function showResult({ wpm, raw, accuracy, errors, strokes, secs }) {
     const test = testKey();
     const eligible = accuracy >= 75 && wpm >= 1;
     const { improved, prev } = eligible ? saveLocalBest(test, wpm) : { improved: false, prev: localBest(test) };
@@ -137,11 +139,12 @@ export function mount(root, { daily = false } = {}) {
     resultEl.hidden = false;
     resultEl.innerHTML = `
       <div class="result">
-        <div class="result-big">${Math.round(wpm)}<small>WPM${improved && prev != null ? ' · YENİ REKOR 🏆' : ''}</small></div>
+        <div class="result-big">${Math.round(wpm)}<small>WPM${improved && prev != null ? ' · YENİ REKOR' : ''}</small></div>
         <div>
           <div class="stat-grid">
             <div class="stat"><span>Doğruluk</span><b>%${accuracy}</b></div>
             <div class="stat"><span>Ham hız</span><b>${Math.round(raw)}</b></div>
+            <div class="stat"><span>Tuş vuruşu</span><b>${strokes}</b></div>
             <div class="stat"><span>Hata</span><b>${errors}</b></div>
             <div class="stat"><span>Süre</span><b>${secs.toFixed(daily ? 2 : 0)} sn</b></div>
             <div class="stat"><span>Kişisel rekor</span><b>${Math.round(Math.max(wpm, prev || 0))}</b></div>
