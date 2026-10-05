@@ -39,6 +39,21 @@ npm test           # API testleri
 
 Ortam değişkenleri: `PORT` (varsayılan `3000`), `DB_FILE` (varsayılan `data/fingermcqueen.db`).
 
+## Sayfa adresleri ve arama motorları
+
+| Adres | Sayfa |
+| --- | --- |
+| `/` | Ana sayfa |
+| `/klavye-hiz-testi` | Klavye GP |
+| `/gunluk-grand-prix` | Günlük Grand Prix |
+| `/refleks-testi` | Start Işıkları |
+| `/cpm-testi` | Pit Stop |
+| `/canli-yaris`, `/canli-yaris/KOD` | Canlı yarış / oda |
+| `/siralama`, `/siralama/<test>` | Sıralama |
+| `/pilot/<ad>` | Pilot profili |
+
+Sunucu her adres için ayrı `<title>`, açıklama, canonical link ve okunabilir içerik gönderir (`server/seo.js`, metinler `public/js/pages.js`). `/robots.txt` ve `/sitemap.xml` otomatik üretilir. Oda ve profil sayfaları `noindex`'tir. Eski `/#/...` linkleri yeni adreslere yönlenir.
+
 ## Yapı
 
 ```
@@ -96,7 +111,7 @@ Depoda `Dockerfile` ve `railway.json` hazır; Railway ikisini de otomatik algıl
 
 > **Tek kopya (replica) çalıştır.** Yarış odaları sunucu belleğinde, veritabanı da tek bir SQLite dosyasında tutulur; birden fazla kopya ölçeklemek odaları böler.
 
-Ortam değişkenleri: `PORT`, `DB_FILE`, `TRUST_PROXY` (proxy arkasında `1`; gerçek ziyaretçi IP'si hız limitinde kullanılır), `CANONICAL_HOST` (ör. `www.fingergp.com`; çıplak/www diğer yazımı buraya 301 ile yönlenir). Sağlık kontrolü: `GET /api/health`.
+Ortam değişkenleri: `PORT`, `DB_FILE`, `TRUST_PROXY` (proxy arkasında `1`; gerçek ziyaretçi IP'si hız limitinde kullanılır), `CANONICAL_HOST` (ör. `www.fingergp.com`; çıplak/www diğer yazımı buraya 301 ile yönlenir), `SITE_URL` (varsayılan `https://www.fingergp.com`; canonical linkler ve sitemap bunu kullanır). Sağlık kontrolü: `GET /api/health`.
 
 #### Alan adı (GoDaddy)
 

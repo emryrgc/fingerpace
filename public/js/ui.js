@@ -86,7 +86,7 @@ export async function submitBlock(el, test, score, details) {
     if (r.day) parts.push(`bugün <span class="rank">P${r.day.rank}</span>`);
     if (r.week) parts.push(`bu hafta <span class="rank">P${r.week.rank}</span>`);
     if (r.all) parts.push(`tüm zamanlar <span class="rank">P${r.all.rank}</span>`);
-    el.innerHTML = `Kaydedildi — ${parts.join(' · ')} <a href="#/leaderboard/${test}">Sıralamayı gör →</a>`;
+    el.innerHTML = `Kaydedildi — ${parts.join(' · ')} <a href="/siralama/${test}">Sıralamayı gör →</a>`;
   } catch (e) {
     el.textContent = e.message;
   }

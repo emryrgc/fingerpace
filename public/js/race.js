@@ -2,6 +2,8 @@ import { $, esc, carSvg, gauge, toast } from './ui.js';
 import { getPilot } from './api.js';
 import { createTyper } from './engine.js';
 import { soundToggle } from './sound.js';
+import { setPath } from './nav.js';
+import { PATHS } from './pages.js';
 
 const CAR_COLORS = ['#3fb489', '#d6a85c', '#6fa8dc', '#e2654f', '#b7a3e0'];
 const COUNTDOWN_LIGHTS = 5;
@@ -16,7 +18,7 @@ export function mount(root, { code } = {}) {
         <button class="btn primary" data-action="register">Pilot lisansı al</button>
       </div>`;
     $('[data-action=register]', root).onclick = () => window.dispatchEvent(new CustomEvent('fmq:register', {
-      detail: { after: () => window.dispatchEvent(new HashChangeEvent('hashchange')) }
+      detail: { after: () => window.dispatchEvent(new Event('fmq:navigate')) }
     }));
     return;
   }
@@ -142,7 +144,7 @@ export function mount(root, { code } = {}) {
     room = null;
     code = null;
     stopRace();
-    if (location.hash !== '#/race') history.replaceState(null, '', '#/race');
+    setPath(PATHS.race);
     menu.hidden = false;
     roomEl.hidden = true;
     codeBox.hidden = true;
@@ -159,7 +161,7 @@ export function mount(root, { code } = {}) {
   function onRoom(r) {
     room = r;
     code = r.code;
-    if (location.hash !== `#/race/${r.code}`) history.replaceState(null, '', `#/race/${r.code}`);
+    setPath(`${PATHS.race}/${r.code}`);
     menu.hidden = true;
     msgEl.hidden = true;
     roomEl.hidden = false;
@@ -241,7 +243,7 @@ export function mount(root, { code } = {}) {
       <ol class="grid-list">${ordered.map((p) => `
         <li class="${p.name === pilot.name ? 'me' : ''}">
           <span class="pos">${p.place ? `P${p.place}` : 'DNF'}</span>
-          <span class="name"><a href="#/pilot/${encodeURIComponent(p.name)}">${esc(p.name)}</a></span>
+          <span class="name"><a href="/pilot/${encodeURIComponent(p.name)}">${esc(p.name)}</a></span>
           <span class="extra">${p.accuracy != null ? `%${p.accuracy}` : ''}</span>
           <span class="sc">${p.wpm ? `${Math.round(p.wpm)} WPM` : '—'}</span>
         </li>`).join('')}</ol>
@@ -308,7 +310,7 @@ export function mount(root, { code } = {}) {
   btn('start').onclick = () => send({ type: 'start' });
   btn('leave').onclick = () => send({ type: 'leave' });
   btn('copy').onclick = async () => {
-    const link = `${location.origin}/#/race/${room?.code}`;
+    const link = `${location.origin}${PATHS.race}/${room?.code}`;
     try { await navigator.clipboard.writeText(link); toast('Davet linki kopyalandı!'); } catch { prompt('Davet linki:', link); }
   };
   $('.join-form', root).addEventListener('submit', (e) => {

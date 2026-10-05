@@ -152,7 +152,7 @@ export function mount(root, { daily = false } = {}) {
           <div class="submit-status"></div>
           <div class="result-actions">
             <button class="btn primary" data-action="again">${daily ? 'Tekrar dene' : 'Yeni tur'} <kbd>Tab</kbd></button>
-            <a class="btn ghost" href="#/leaderboard/${test}">Sıralama</a>
+            <a class="btn ghost" href="/siralama/${test}">Sıralama</a>
           </div>
         </div>
       </div>`;

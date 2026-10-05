@@ -1,6 +1,7 @@
 import express from 'express';
 import { randomBytes } from 'node:crypto';
 import { sha256 } from './db.js';
+import { createSeo } from './seo.js';
 import { fileURLToPath } from 'node:url';
 import { CATALOG, publicCatalog, validateScore } from './catalog.js';
 import { dailyKey } from '../public/js/words.js';
@@ -169,7 +170,14 @@ export function createApp(db, { now = () => Date.now() } = {}) {
   });
 
   app.use('/api', (req, res) => res.status(404).json({ error: 'Bulunamadı.' }));
-  app.use(express.static(PUBLIC_DIR, { extensions: ['html'] }));
-  app.get('/{*splat}', (req, res) => res.sendFile('index.html', { root: PUBLIC_DIR }));
+  const seo = createSeo(PUBLIC_DIR);
+  app.get('/robots.txt', (req, res) => res.type('text/plain').send(seo.robots()));
+  app.get('/sitemap.xml', (req, res) => res.type('application/xml').send(seo.sitemap()));
+  app.use(express.static(PUBLIC_DIR, { index: false }));
+  app.get('/{*splat}', (req, res) => {
+    if (/\.[a-z0-9]+$/i.test(req.path)) return res.status(404).type('text/plain').send('Bulunamadı.');
+    const { status, html } = seo.render(req.path);
+    res.status(status).type('html').send(html);
+  });
   return app;
 }

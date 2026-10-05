@@ -1,5 +1,7 @@
 import { $, esc } from './ui.js';
 import { leaderboard, getPilot, profile, logout } from './api.js';
+import { navigate, setPath } from './nav.js';
+import { PATHS } from './pages.js';
 
 const GROUPS = { typing: 'Klavye GP', daily: 'Günlük GP', reflex: 'Start Işıkları', cpm: 'Pit Stop' };
 const PERIODS = { day: 'Bugün', week: 'Bu hafta', all: 'Tüm zamanlar' };
@@ -50,7 +52,7 @@ export function mount(root, { test } = {}) {
 
   function render() {
     const key = build(f);
-    if (location.hash !== `#/leaderboard/${key}`) history.replaceState(null, '', `#/leaderboard/${key}`);
+    setPath(`${PATHS.leaderboard}/${key}`);
     root.innerHTML = `
       <div class="page-head">
         <div><div class="eyebrow">Sıralama</div><h1 lang="en">Starting grid</h1></div>
@@ -98,7 +100,7 @@ function boardHtml(test, { rows, me }) {
       <a class="btn primary" href="${testHref(test)}">İlk sen ol</a></div>`;
   }
   const step = (r, p) => r
-    ? `<div class="step p${p}"><div class="who"><a href="#/pilot/${encodeURIComponent(r.name)}">${esc(r.name)}</a></div>
+    ? `<div class="step p${p}"><div class="who"><a href="/pilot/${encodeURIComponent(r.name)}">${esc(r.name)}</a></div>
         <div class="score">${fmt(r.score)} <small class="muted">${unit}</small></div><div class="block">P${p}</div></div>`
     : `<div class="step p${p} empty"><div class="who">—</div><div class="score">&nbsp;</div><div class="block">P${p}</div></div>`;
   const rest = rows.slice(3);
@@ -108,7 +110,7 @@ function boardHtml(test, { rows, me }) {
     ${rest.length ? `<ol class="grid-list">${rest.map((r) => `
       <li class="${r.name === myName ? 'me' : ''}">
         <span class="pos">P${r.rank}</span>
-        <span class="name"><a href="#/pilot/${encodeURIComponent(r.name)}">${esc(r.name)}</a></span>
+        <span class="name"><a href="/pilot/${encodeURIComponent(r.name)}">${esc(r.name)}</a></span>
         <span class="extra">${esc(extraOf(test, r.details))}</span>
         <span class="sc">${fmt(r.score)} ${unit}</span>
       </li>`).join('')}</ol>` : ''}
@@ -117,7 +119,7 @@ function boardHtml(test, { rows, me }) {
 
 export function testHref(test) {
   const f = parse(test);
-  return { typing: '#/typing', daily: '#/daily', reflex: '#/reflex', cpm: '#/clicks' }[f.group];
+  return { typing: PATHS.typing, daily: PATHS.daily, reflex: PATHS.reflex, cpm: PATHS.clicks }[f.group];
 }
 
 export async function mountProfile(root, { name }) {
@@ -139,7 +141,7 @@ export async function mountProfile(root, { name }) {
       </div>` : ''}
       <h2 style="font-size:28px;margin-bottom:14px">Kişisel rekorlar</h2>
       ${bests.length ? `<div class="bests">${bests.map(([t, b]) => `
-        <a class="stat" style="text-decoration:none" href="#/leaderboard/${t}">
+        <a class="stat" style="text-decoration:none" href="/siralama/${t}">
           <span>${esc(labelOf(t))}</span><b>${fmt(b.score)} ${unitOf(t)}</b>
           <div class="muted" style="font-size:13px">Tüm zamanlar P${b.rank} · ${b.runs} tur</div>
         </a>`).join('')}</div>` : '<p class="muted">Henüz tur atılmamış.</p>'}
@@ -152,7 +154,7 @@ export async function mountProfile(root, { name }) {
     if (out) out.onclick = () => {
       if (!confirm('Lisans anahtarın yalnızca bu tarayıcıda. Çıkış yaparsan bu pilot adına bir daha giriş yapamazsın. Emin misin?')) return;
       logout();
-      location.hash = '#/';
+      navigate('/');
     };
   } catch (e) {
     root.innerHTML = `<p class="empty-state">${esc(e.message)}</p>`;

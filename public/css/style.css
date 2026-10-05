@@ -478,6 +478,14 @@ kbd {
 }
 .toast.show { transform: translate(-50%, 0); visibility: visible; }
 
+/* ---------- about / search copy under each page ---------- */
+.seo-copy {
+  margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px 32px;
+}
+.seo-copy h2 { font-size: 22px; font-style: italic; margin-bottom: 8px; color: var(--text); }
+.seo-copy p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+
 /* ---------- responsive ---------- */
 @media (max-width: 860px) {
   .topbar { flex-wrap: wrap; gap: 10px 16px; }
